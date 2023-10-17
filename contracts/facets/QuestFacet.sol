@@ -121,7 +121,7 @@ library StorageLib {
         require(s.players[_tokenId].status == 0); //make sure player is idle
         require(s.owners[_tokenId] == msg.sender); //ownerOf
         require(c.goldCount <= 10000000); // less than one 10M
-        c.goldCount++;
+        c.goldCount += 10; //needs to increase same
         s.players[_tokenId].status = 2; //set quest status
         q.goldQuest[_tokenId] = block.timestamp; //set start time
     }
