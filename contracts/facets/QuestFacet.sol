@@ -120,7 +120,7 @@ library StorageLib {
         CoinStorage storage c = diamondStorageCoin();
         require(s.players[_tokenId].status == 0); //make sure player is idle
         require(s.owners[_tokenId] == msg.sender); //ownerOf
-        require(c.goldCount <= 10000000); // less than one 10M
+        require(c.goldCount <= 1000000); // less than one 1M
         c.goldCount += 10; //needs to increase same
         s.players[_tokenId].status = 2; //set quest status
         q.goldQuest[_tokenId] = block.timestamp; //set start time
@@ -137,7 +137,7 @@ library StorageLib {
         require(block.timestamp >= q.goldQuest[_playerId] + timer, "it's too early to pull out");
         s.players[_playerId].status = 0; //set back to idle
         delete q.goldQuest[_playerId]; //remove the start time
-        c.goldBalance[msg.sender] += 10; //mint 10 gold
+        c.goldBalance[msg.sender] += 10; //mint 1 gold
     }
 
     function _startQuestGem(uint256 _playerId) internal {
