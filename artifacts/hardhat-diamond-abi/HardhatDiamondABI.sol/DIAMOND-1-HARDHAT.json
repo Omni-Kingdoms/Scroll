@@ -4031,6 +4031,25 @@
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "_basicEquipmentSchemaId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getBasicEquipmentSupply",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
           "name": "_equipmentId",
           "type": "uint256"
         }
