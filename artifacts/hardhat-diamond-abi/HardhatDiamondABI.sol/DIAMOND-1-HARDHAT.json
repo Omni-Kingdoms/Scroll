@@ -3226,6 +3226,25 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "_address",
+          "type": "address"
+        }
+      ],
+      "name": "getGoldBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
           "name": "_playerId",
           "type": "uint256"
@@ -3378,6 +3397,11 @@
               "type": "uint256"
             },
             {
+              "internalType": "uint256",
+              "name": "supply",
+              "type": "uint256"
+            },
+            {
               "internalType": "string",
               "name": "name",
               "type": "string"
@@ -3443,6 +3467,11 @@
             {
               "internalType": "uint256",
               "name": "cost",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "supply",
               "type": "uint256"
             },
             {
@@ -3756,6 +3785,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "_supply",
+          "type": "uint256"
+        },
+        {
           "internalType": "string",
           "name": "_name",
           "type": "string"
@@ -3967,6 +4001,11 @@
             {
               "internalType": "uint256",
               "name": "cost",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "supply",
               "type": "uint256"
             },
             {
@@ -6850,32 +6889,6 @@
         }
       ],
       "name": "getGemStart",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getGold",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_address",
-          "type": "address"
-        }
-      ],
-      "name": "getGoldBalance",
       "outputs": [
         {
           "internalType": "uint256",

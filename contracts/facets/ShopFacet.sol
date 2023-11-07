@@ -100,6 +100,8 @@ library StorageLib {
         require(c.goldBalance[msg.sender] >= cost); //check user has enough gold
         p.basicPotionToPlayer[_basicPotionSchemaId][_playerId]++; //add potion to count
         c.goldBalance[msg.sender] -= cost; //deduct gold balance
+        address feeRecipient = address(0x08d8E680A2d295Af8CbCD8B8e07f900275bc6B8D);
+        c.goldBalance[feeRecipient] += cost; //increment fee account gold
     }
 
     function _consumeBasicPotion(uint256 _playerId, uint256 _basicPotionSchemaId) internal {

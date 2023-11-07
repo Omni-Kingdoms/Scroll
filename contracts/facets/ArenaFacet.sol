@@ -17,6 +17,7 @@ struct BasicArena {
 
 struct HillArena {
     uint256 hillArenaId;
+    uint256 cost;
     uint256 cooldown;
     uint256 hostId;
     uint256 wins;
@@ -47,6 +48,7 @@ library StorageLib {
     }
 
     struct CoinStorage {
+        uint256 goldCount;
         mapping(address => uint256) goldBalance;
         mapping(address => uint256) totemBalance;
         mapping(address => uint256) diamondBalance;
@@ -59,6 +61,7 @@ library StorageLib {
         uint256 hillArenaCounter;
         mapping(uint256 => HillArena) hillArenas;
         mapping(uint256 => mapping(uint256 => uint256)) hillArenaCooldowns;
+        mapping(uint256 => uint256) hillArenaScores;
         mapping(uint256 => uint256) mainArenaWins;
         mapping(uint256 => uint256) mainArenaLosses;
         mapping(uint256 => uint256) totalArenaWins;
@@ -106,11 +109,12 @@ library StorageLib {
         );
     }
 
-    function _createHillArena(uint256 _cooldown, string memory _name, string memory _uri) internal {
+    function _createHillArena(uint256 _cost, uint256 _cooldown, string memory _name, string memory _uri) internal {
         ArenaStorage storage a = diamondStorageArena();
         a.hillArenaCounter++; // incmrement counter
         a.hillArenas[a.hillArenaCounter] = HillArena(
             a.hillArenaCounter,
+            _cost,
             _cooldown,
             0, //hostId starts at zero to show that there is no player
             0,
@@ -146,6 +150,7 @@ library StorageLib {
     function _enterHillArena(uint256 _playerId, uint256 _hillArenaId) internal {
         PlayerStorage storage s = diamondStoragePlayer();
         ArenaStorage storage a = diamondStorageArena();
+        CoinStorage storage c = diamondStorageCoin();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf
         HillArena storage arena = a.hillArenas[_hillArenaId]; //save arena object
@@ -153,6 +158,8 @@ library StorageLib {
         uint256 timer;
         s.players[_playerId].agility >= arena.cooldown/2  ? timer = arena.cooldown/2 : timer = arena.cooldown/2 - s.players[_playerId].agility + 10;
         require(block.timestamp >= a.hillArenaCooldowns[_hillArenaId][_playerId] + timer); //make sure that they have waited 5 mins since last quest (600 seconds);
+        require(c.goldBalance[msg.sender] >= arena.cost, "broke ass got no money"); //gold check
+        c.goldBalance[msg.sender] -= arena.cost; //deduct one gold from their balance
         s.players[_playerId].status = 4; //set the host's status to being in the arena
         a.hillArenas[_hillArenaId].open = false; //close the arena
         a.hillArenas[_hillArenaId].hostId = _playerId;
@@ -205,7 +212,7 @@ library StorageLib {
     //     ArenaStorage storage a = diamondStorageArena();
     //     require(s.players[_playerId].status == 0); //make sure player is idle
     //     require(s.owners[_playerId] == msg.sender); //ownerOf
-    //     BasicArena storage arena = a.basicArenas[_basicArenaId]; //save arena object
+    //     HillArena storage arena = a.hillArenas[_hillArenaId]; //save arena object
     //     require(!arena.open, "arena is not open"); //arena is open
     //     uint256 timer;
     //     s.players[_playerId].agility >= arena.cooldown/2  ? timer = arena.cooldown/2 : timer = arena.cooldown/2 - s.players[_playerId].agility + 10;
@@ -318,6 +325,11 @@ library StorageLib {
         return a.basicArenaCooldowns[_basicArenaId][_playerId];
     }
 
+    function _getGoldBalance(address _address) internal view returns (uint256) {
+        CoinStorage storage c = diamondStorageCoin();
+        return c.goldBalance[_address];
+    }
+
 }
 
 contract ArenaFacet {
@@ -369,6 +381,10 @@ contract ArenaFacet {
 
     function getBasicArenaCooldowns(uint256 _playerId, uint256 _basicArenaId) public view returns (uint256) {
         return StorageLib._getBasicArenaCooldown(_playerId, _basicArenaId);
+    }
+
+    function getGoldBalance(address _address) public view returns (uint256) {
+        return StorageLib._getGoldBalance(_address);
     }
 
     //function supportsInterface(bytes4 _interfaceID) external view returns (bool) {}

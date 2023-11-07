@@ -40,7 +40,7 @@ module.exports = {
   etherscan: {
     apiKey: {
       polygonMumbai: process.env.MUMBAI_KEY,
-      scroll: process.env.ETHERSCAN,
+      scroll: process.env.SCROLLSCAN,
       //scroll_sepolia: process.env.ETHERSCAN,
       scroll_sepolia: 'abc',
       scroll_test: process.env.ETHERSCAN,

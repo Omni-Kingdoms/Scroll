@@ -32,6 +32,17 @@ struct TreasureListing {
     uint256 addressPointer;
 }
 
+struct BasicEquipmentSchema {
+    uint256 basicEquipmentSchemaId;
+    uint256 slot;
+    uint256 value;
+    uint256 stat;
+    uint256 cost;
+    uint256 supply;
+    string name;
+    string uri;
+}
+
 struct Equipment {
     uint256 id;
     uint256 pointer;
