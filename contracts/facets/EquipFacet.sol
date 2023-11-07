@@ -3,12 +3,13 @@ pragma solidity ^0.8.0;
 
 import "../libraries/PlayerSlotLib.sol";
 
-
-struct BasicEquipment {
+struct BasicEquipmentSchema {
+    uint256 basicEquipmentSchemaId;
     uint256 slot;
     uint256 value;
     uint256 stat;
     uint256 cost;
+    uint256 supply;
     string name;
     string uri;
 }
@@ -39,6 +40,18 @@ struct BasicCraft {
 struct ManaCraft {
     uint256 slot;
     uint256 cost;
+    string oldName;
+    string newName;
+    string uri;
+}
+
+struct AdvancedCraft {
+    uint256 advancedCraftId;
+    uint256 slot;
+    uint256 value;
+    uint256 stat;
+    uint256 amount;
+    uint256 treasureSchemaId;
     string oldName;
     string newName;
     string uri;
@@ -76,11 +89,14 @@ library StorageLib {
     struct EquipmentStorage {
         uint256 equipmentCount;
         uint256 basicEquipmentCount;
-        mapping(uint256 => BasicEquipment) basicEquipment;
+        mapping(uint256 => BasicEquipmentSchema) basicEquipmentSchema;
+        mapping(uint256 => uint256) basicEquipmentSupply;
         mapping(uint256 => Equipment) equipment;
         uint256 basicCraftCount;
         mapping(uint256 => BasicCraft) basicCraft;
         mapping(uint256 => uint256[]) playerToEquipment;
+        uint256 advancedCraftCount;
+        mapping(uint256 => AdvancedCraft) advancedCraft;
     }
 
     function diamondStoragePlayer() internal pure returns (PlayerStorage storage ds) {
@@ -90,7 +106,7 @@ library StorageLib {
         }
     }
 
-    function diamondStorageItem() internal pure returns (EquipmentStorage storage ds) {
+    function diamondStorageEquipment() internal pure returns (EquipmentStorage storage ds) {
         bytes32 position = EQUIPMENT_STORAGE_POSITION;
         assembly {
             ds.slot := position
@@ -98,7 +114,7 @@ library StorageLib {
     }
 
     function _increaseStats(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         Equipment storage equipment = e.equipment[_equipmentId];
         uint256 stat = equipment.stat;
@@ -129,7 +145,7 @@ library StorageLib {
     }
 
     function _decreaseStats(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         Equipment storage equipment = e.equipment[_equipmentId];
         uint256 stat = equipment.stat;
@@ -168,7 +184,7 @@ library StorageLib {
     }
 
     function _equip(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         uint256 slot = e.equipment[_equipmentId].slot;
         if (slot == 0) { //head
@@ -193,7 +209,7 @@ library StorageLib {
     }
 
     function _unequip(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         uint256 slot = e.equipment[_equipmentId].slot;
         if (slot == 0) { //head
             _unequipHead(_playerId, _equipmentId);
@@ -213,7 +229,7 @@ library StorageLib {
     }
 
     function _equipHead(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -227,7 +243,7 @@ library StorageLib {
         _increaseStats(_playerId, _equipmentId);
     }
     function _unequipHead(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -241,7 +257,7 @@ library StorageLib {
     }
 
     function _equipBody(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -255,7 +271,7 @@ library StorageLib {
         _increaseStats(_playerId, _equipmentId);
     }
     function _unequipBody(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -269,7 +285,7 @@ library StorageLib {
     }
 
     function _equipLeftHand(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -283,7 +299,7 @@ library StorageLib {
         _increaseStats(_playerId, _equipmentId);
     }
     function _unequipLeftHand(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -297,7 +313,7 @@ library StorageLib {
     }
 
     function _equipRightHand(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -311,7 +327,7 @@ library StorageLib {
         _increaseStats(_playerId, _equipmentId);
     }
     function _unequipRightHand(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -325,7 +341,7 @@ library StorageLib {
     }
 
     function _equipPants(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -339,7 +355,7 @@ library StorageLib {
         _increaseStats(_playerId, _equipmentId);
     }
     function _unequipPants(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -353,7 +369,7 @@ library StorageLib {
     }
 
     function _equipFeet(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -367,7 +383,7 @@ library StorageLib {
         _increaseStats(_playerId, _equipmentId);
     }
     function _unequipFeet(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -381,7 +397,7 @@ library StorageLib {
     }
 
     function _equipNeck(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
@@ -395,7 +411,7 @@ library StorageLib {
         _increaseStats(_playerId, _equipmentId);
     }
     function _unequipNeck(uint256 _playerId, uint256 _equipmentId) internal {
-        EquipmentStorage storage e = diamondStorageItem();
+        EquipmentStorage storage e = diamondStorageEquipment();
         PlayerStorage storage s = diamondStoragePlayer();
         require(s.players[_playerId].status == 0); //make sure player is idle
         require(s.owners[_playerId] == msg.sender); //ownerOf player
