@@ -6739,6 +6739,11 @@
           "internalType": "uint256",
           "name": "_class",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
         }
       ],
       "name": "mint",

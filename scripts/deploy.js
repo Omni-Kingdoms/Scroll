@@ -23,18 +23,18 @@ async function deployDiamond() {
     "DiamondCutFacet",
     "DiamondLoupeFacet",
     "OwnershipFacet",
-    "ERC721Facet",
-    "PlayerFacet",
+    "ERC721Facet", //live
+    "PlayerFacet", //live
     //"QuestFacet",
-    "CraftFacet",
-     'TrainFacet',
-    'EquipFacet',
-    'ShopFacet',
-    'ArenaFacet',
-    'ExchangeFacet',
-    'MonsterFacet',
+    //"CraftFacet", //live
+    //'TrainFacet', //live
+    //'EquipFacet', //live
+    //'ShopFacet', //live
+    //'ArenaFacet', //live
+    //'ExchangeFacet', //live
+    //'MonsterFacet', //live
     // 'TreasureFacet',
-    'PlayerDropFacet',
+    //'PlayerDropFacet', //live
     //'ScriptFacet',
     //'BridgeFacet',
     //'OmniFacet',

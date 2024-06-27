@@ -14,8 +14,8 @@ async function getFacetAddress(FacetName) {
     //   return "0x7C6A9fD301D2f5b0b3E1B6d3eF0bEaC5Bd6aF2B1";
     case "ERC721Facet":
       return "0x83cD858d0caF909b8C55E963E052aa68AfCd6031";
-    case "PlayerFacet":
-      return "0x58b7FE012802E15dB24532e99e3329Bff2D99d02";
+    // case "PlayerFacet":
+    //   return "0x58b7FE012802E15dB24532e99e3329Bff2D99d02";
     // case 'TrainFacet':
     //   return "0x7C6A9fD301D2f5b0b3E1B6d3eF0bEaC5Bd6aF2B1";
     // case 'ArenaFacet':
@@ -38,7 +38,7 @@ async function deployDiamond() {
     // "DiamondLoupeFacet",
     // "OwnershipFacet",
     "ERC721Facet",
-    "PlayerFacet",
+    //"PlayerFacet",
     //"QuestFacet",
     //"CraftFacet",
     //'TrainFacet',

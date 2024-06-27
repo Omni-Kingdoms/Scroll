@@ -116,7 +116,7 @@ module.exports = {
     scroll_test: {
       gasLimit: 400000000,
       gasPrice: 400000000,
-      url: "https://sepolia-rpc.scroll.io/",
+      url: "https://scroll-sepolia.drpc.org",
       accounts: [keys],
     },
     scroll: {
