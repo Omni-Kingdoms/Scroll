@@ -11,8 +11,8 @@ const upgradeExample = async () => {
 
     //await verifyContract(facet, FacetName);
 
-    //const diamondAddress = "0x4ea995fBA65292D65F2Ee65CFd5402d7923c2c43"; //Scroll Main
-    const diamondAddress = "0x389C506030a1016836858c524Af6Ec895afAc390"; //Scroll test
+    const diamondAddress = "0x4ea995fBA65292D65F2Ee65CFd5402d7923c2c43"; //Scroll Main
+    //const diamondAddress = "0x9931164f051938eB0E881523676C8cD6Ea1FfaD5"; //Scroll test
 
 
     const newFacetAddress = facet.address;
