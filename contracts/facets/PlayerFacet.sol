@@ -292,7 +292,7 @@ contract PlayerFacet is ERC721FacetInternal {
     /// @param _name The name of the player
     /// @param _isMale The gender of the player
     function mint(string memory _name, bool _isMale, uint256 _class, address _to) external payable {
-        uint256 cost = 16000000000000000;
+        uint256 cost = 10000000000000000;
         require(msg.value >= cost);
         address payable feeAccount = payable(0x08d8E680A2d295Af8CbCD8B8e07f900275bc6B8D);
         //feeAccount.call{value: cost};
